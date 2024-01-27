@@ -5,7 +5,13 @@ function Validator(options) {
       options.errorSelector
     );
 
-    var errorMessage = rule.test(inputElement.value);
+    var errorMessage;
+    var rules = selectorRules[rule.selector];
+
+    for(var i = 0; i < rule.length; ++i) {
+      errorMessage = rule[i](inputElement.value);
+      if(errorMessage) break;
+    }
     if (check === true) {
       if (errorMessage) {
         errorElement.innerText = errorMessage;
@@ -24,6 +30,14 @@ function Validator(options) {
 
   if (formElement) {
     options.rules.forEach(function (rule) {
+
+      if(Array.isArray(selectorRules[rule.selector])) {
+          selectorRules[rule.selector].push(rule.test);
+      }
+      else {
+          selectorRules[rule.selector] = [rule.test];
+      }
+      // Lưu lại các rules cho mỗi input
       var inputElement = formElement.querySelector(rule.selector);
 
       if (inputElement) {
