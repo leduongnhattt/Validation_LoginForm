@@ -8,9 +8,9 @@ function Validator(options) {
     var errorMessage;
     var rules = selectorRules[rule.selector];
 
-    for(var i = 0; i < rule.length; ++i) {
-      errorMessage = rule[i](inputElement.value);
-      if(errorMessage) break;
+    for (var i = 0; i < rules.length; ++i) {
+      errorMessage = rules[i](inputElement.value);
+      if (errorMessage) break;
     }
     if (check === true) {
       if (errorMessage) {
@@ -24,18 +24,50 @@ function Validator(options) {
       errorElement.innerText = "";
       inputElement.parentElement.classList.remove("invalid");
     }
+
+    return !errorMessage;
   }
 
   var formElement = document.querySelector(options.form);
 
   if (formElement) {
-    options.rules.forEach(function (rule) {
+    formElement.onsubmit = function (e) {
+      e.preventDefault();
 
-      if(Array.isArray(selectorRules[rule.selector])) {
-          selectorRules[rule.selector].push(rule.test);
+      var isFormValid = true;
+      options.rules.forEach(function (rule) {
+        var inputElement = formElement.querySelector(rule.selector);
+        var isValid = validate(inputElement, rule, true);
+
+        if (!isValid) {
+          isFormValid = false;
+        }
+      });
+
+      if (isFormValid) {
+        if (typeof options.onSubmit === 'function') {
+          var enableInputs = formElement.querySelectorAll('[name]');
+          var formValues = Array.from(enableInputs).reduce(function (
+            values,
+            input
+          ) {
+            return (values[input.name] = input.value) && values;
+          },
+          {});
+          options.onSubmit(formValues);
+        }
+        // Trường hợp submit mặc định
+        else {
+          formElement.submit();
+        }
       }
-      else {
-          selectorRules[rule.selector] = [rule.test];
+    };
+
+    options.rules.forEach(function (rule) {
+      if (Array.isArray(selectorRules[rule.selector])) {
+        selectorRules[rule.selector].push(rule.test);
+      } else {
+        selectorRules[rule.selector] = [rule.test];
       }
       // Lưu lại các rules cho mỗi input
       var inputElement = formElement.querySelector(rule.selector);

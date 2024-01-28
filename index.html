@@ -18,25 +18,25 @@
 
             <div class="form-group">
                 <label for="fullname" class="form-label">Tên đầy đủ</label>
-                <input id="fullname" type= "text" placeholder="VD: Lê Dương Nhật" class="form-control"></input>
+                <input id="fullname" type= "text" placeholder="VD: Lê Dương Nhật" class="form-control" name="fullname"></input>
                 <span class="form-message"></span>
             </div>
 
             <div class="form-group">
                 <label for="email" class="form-label">Email</label>
-                <input id="email" type= "email" placeholder="VD: email@domain.com" class="form-control"></input>
+                <input id="email" type= "email" placeholder="VD: email@domain.com" class="form-control" name="email"></input>
                 <span class="form-message"></span>
             </div>
 
             <div class="form-group">
                 <label for="password" class="form-label">Mật khẩu</label>
-                <input id="password" type= "password" placeholder="Nhập mật khẩu" class="form-control"></input>
+                <input id="password" type= "password" placeholder="Nhập mật khẩu" class="form-control" name="password"></input>
                 <span class="form-message"></span>
             </div>
 
             <div class="form-group">
                 <label for="password_confirmation" class="form-label">Nhập lại mật khẩu</label>
-                <input id="password_confirmation" type= "password" placeholder="Nhập lại mật khẩu" class="form-control"></input>
+                <input id="password_confirmation" type= "password" placeholder="Nhập lại mật khẩu" class="form-control" name="password_confirmation"></input>
                 <span class="form-message"></span>
             </div>
 
@@ -51,12 +51,16 @@
             errorSelector: ".form-message",
             rules: [
                 Validator.isRequired('#fullname', 'Vui lòng nhập tên đầy đủ của bạn'),
-                Validator.isEmail('#email'),
-                Validator.minLength('#password', 6),
+                Validator.isEmail('#email', 'Vui lòng nhập chính xác email'),
+                Validator.minLength('#password', 6, 'Mật khẩu không được quá 6 ký tự'),
+                Validator.isRequired('#password_confirmation', 'Vui lòng nhập đầy đủ password'),
                 Validator.isConfirmed('#password_confirmation', function() {
                     return document.querySelector('#form-1 #password').value;
                 }, 'Mật khẩu nhập lại không chính xác'),
-            ]
+            ],
+            onSubmit: function(data) {
+               console.log(data);
+            }
         });
     </script>
 </body>
